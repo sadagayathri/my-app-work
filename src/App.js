@@ -1,11 +1,18 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+ import 'bootstrap/dist/css/bootstrap.min.css';
+import Project from './Project';
 
 function App() {
+
   return (
-    <div className="App">
-      <h1>welcome</h1>
+    
+    <div className="mybox">
+    
+      <Project></Project>
+  
     </div>
+
   );
 }
 
