@@ -1,10 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-
+import Quiz from './Quiz';
 function App() {
   return (
-    <div className="App">
-      <h1>welcome</h1>
+    <div className="mybox">
+      <Quiz></Quiz>
     </div>
   );
 }
