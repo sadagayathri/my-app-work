@@ -1,82 +1,98 @@
 import React from "react";
 import axios from "axios";
 function Shopping(){
-    var [products,setProducts]=React.useState([])
-    var [cart,setCart]=React.useState([])
+    var [products,setproducts]=React.useState([])
+    var [cart,setcart]=React.useState([])
     React.useEffect(function(){
-        axios.get("https://fakestoreapi.com/products")
-        .then((res)=>{
-            setProducts([...res.data])
-            var products=res.data.map((x)=>{
-                return {...x,IsProductInCart:false}
+      axios.get('https://fakestoreapi.com/products')
+      .then((res)=>{
+        var products = res.data.map((y)=>{
+          return {...y,IsProductInCart:false,count:0}
+      });
+        setproducts([...products])
         
-              });
-              setProducts([...products])
-              console.log(products)
-        })
-            
+
+      })
     },[])
-  
-    function addtocart(p,i,ev){
-        var temp=[...products]
-        temp[i].IsProductInCart=! temp[i].IsProductInCart
-        ev.target.style.display="none"
-        p.count=1
-        setCart([...cart,p])  
+   
+    function addtocart(i){
+      var temp=[...products]
+      temp[i].IsProductInCart=true
+       temp[i].count++
+       setcart([...cart,temp[i]])
     }
-    function add(a){
-        a.count++
-        setCart([a])
-        setCart([...cart])
+    function addto(i){
+      var temp=[...cart]
+       temp[i].count++
+        setcart(temp)
     }
-    function sub(s,i){
-        // s.count--
-        console.log(i)
-        // var temp=[...cart]
-        // if(s.count<1){
-        //     return s.splice(i,1)
-        // }
-        // else{
-        //     return s.count--
-        // }
-        s.count<1?(s.splice(i,1)):(s.count--)
-        // // s.count<1?(cart.splice(i,1)):(s.count--)
-        setCart([s])
-        setCart([...cart])
+    function add(i){
+      
+      var temp=[...cart]
+     
+       temp[i].count--
+      
+        setcart(temp)
     }
-    
     return(
-      <div className="d-flex flex-wrap ">
-        <div className="w-50">
-        <ul className="d-flex flex-wrap ">
+        <div className="d-flex flex-wrap">
+            <div style={{width:'60%'}}>
+            <ul className="d-flex flex-wrap">
             {
-                products.length>0 && products.map((product,i)=>{
-                    return <div className="card m-2" style={{width: "12rem"}}>
-                          <img src={product.image} class="card-img-top" alt="..." style={{height: "200px"}}/>
-                        <div className="card-body">
-                      <h5 className="card-title">{product.title}</h5>
-                      <p className="card-text">{product.description.slice(0,10)}</p>
-                      <p>{product.price}</p>
-                      <button onClick={()=>{add(product)}} style={{display:"none"}}>+</button>
-                      <button onClick={(event)=>{addtocart(product,i,event)}} id="btn">Add to cart</button>
-                      <button onClick={()=>{sub(product)}} style={{display:"none"}}>-</button>
-                        </div>
-                       </div>
+                products.map((a,i)=>{
+                    return <div  className="card shadow-lg p-3 mb-5 bg-white rounded m-4 bg-info-subtle text-emphasis-info" style={{width: '14rem'}}>
+                    
+                    <div className="card-body d-flex flex-column justify-content-between"  >
+                    <img src={a.image} style={{height:'160px',width:'160px'}} alt="Card image cap"/>
+                      <h5 className="card-title">{a.title}</h5>
+                      <p className="card-text">{a.price}</p>
+                      
+                      <div>
+                    
+                      <button  className="btn btn-info" onClick={(ev)=>{addtocart(i)}}  disabled={a.IsProductInCart?true:false}>Add to cart</button>
+                      
+                      
+                      </div>
+                      
+                    </div>
+                  </div>
                 })
             }
-        </ul>
+           </ul>
+            </div>
+            <div className='p-3'style={{width:'40%',border:'5px dashed black'}}>
+               {
+               
+                cart.length>0 && cart.map((b,ind)=>{
+                    return <div className="card shadow-lg p-3 mb-5 bg-white rounded m-2 bg-info-subtle text-emphasis-info " style={{width: '14rem'}}>
+                       <div className="card-body d-flex flex-column justify-content-between" >
+                      <img src={b.image} style={{height:'200px',width:'160px'}} alt="Card image cap"/>
+                      <h5 className="card-title">{b.title}</h5>
+                      <p className="card-text">{b.price}</p>
+                      <div>
+                    <button className="btn btn-info" onClick={()=>{add(ind)}} disabled={b.count===1?true:false}>-</button>
+                    <span>{b.count}</span>
+                    <button className="btn btn-info" onClick={()=>{addto(ind)}}>+</button>
+
+                    </div>
+                    </div>
+                    </div>
+                })
+               }
+               
+            </div>
+           
         </div>
-        <div className="w-50">
+    )
+}
+export default Shopping;
+        {/* <div className="w-50">
            <ul>
             {
                 cart.length>0 && cart.map((c,i)=>{  
                     return <div className="d-flex flex-wrap ">
                           <div className="card" style={{width: "40rem"}}>
                            <img src={c.image} class="card-img-top" alt="..." style={{width:"70px",height:"70px"}}/>
-                           {/* <b className="card-title">{c.title}</b>
-                           <button onClick={()=>{add(c)}}>+</button>
-                           <button onClick={()=>{sub(c)}}>-</button>
-                           <p className="card-text"></p>{c.price} */}
                            <div className="card-body">
                           <b className="card-title">{c.title}:{c.count}</b>
                           <button onClick={()=>{add(c)}}>+</button>
@@ -88,16 +104,13 @@ function Shopping(){
                           </div>
                     
                   
-                    // return <li>
-                    //     {c.title}:{c.count}
-                    //     <button onClick={()=>{add(c)}}>+</button>
-                    //     <button onClick={()=>{sub(c)}}>-</button>
-                    // </li>
+                     return <li>
+                         {c.title}:{c.count}
+                         <button onClick={()=>{add(c)}}>+</button>
+                         <button onClick={()=>{sub(c)}}>-</button>
+                     </li>
                 })
             }
            </ul>
-        </div>
-      </div>  
-    )
-}
-export default Shopping;
+        </div> */}
+     
